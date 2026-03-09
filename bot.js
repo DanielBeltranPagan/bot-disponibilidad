@@ -1,3 +1,4 @@
+console.log("--- ¡EL BOT ESTÁ LEYENDO ESTE ARCHIVO! ---");
 const { Client, GatewayIntentBits, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
 const http = require('http');
 const fs = require('fs');
@@ -85,5 +86,6 @@ client.on('interactionCreate', async interaction => {
 // LOGIN (Usa variable de entorno TOKEN para Render)
 
 client.login(process.env.TOKEN || "PEGA_AQUÍ_TU_TOKEN_PARA_PRUEBAS");
+
 
 
