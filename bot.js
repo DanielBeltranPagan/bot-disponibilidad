@@ -1,24 +1,17 @@
-console.log("--- ¡EL BOT ESTÁ LEYENDO ESTE ARCHIVO! ---");
 const { Client, GatewayIntentBits, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
 const http = require('http');
 const fs = require('fs');
 
-// Servidor para mantener el bot despierto en Render
-http.createServer((req, res) => {
-    res.end('Bot activo');
-}).listen(3000);
+console.log("--- 1. INICIANDO EL PROCESO ---");
+
+http.createServer((req, res) => { res.end('Bot activo'); }).listen(3000);
 
 const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent
-  ]
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent]
 });
 
 let jugadores = new Set();
 
-// Función para guardar en historial
 function registrar(usuario, accion) {
     const fecha = new Date().toLocaleString();
     const linea = `${fecha} - Usuario: ${usuario} | Acción: ${accion}\n`;
@@ -45,33 +38,28 @@ const crearPanel = () => {
     return { embeds: [embed], components: [botones] };
 };
 
-client.once('ready', () => {
-  console.log("¡HOLA! SOY EL BOT QUE ESTÁ FUNCIONANDO");
+client.on('ready', () => {
+  console.log(`--- 2. CONECTADO COMO: ${client.user.tag} ---`);
 });
 
 client.on('messageCreate', async message => {
-    // Comando !panel
-    if (message.content === '!test') {
+    if (message.content === '!panel') {
+        console.log("--- 3. PANEL SOLICITADO ---");
         await message.channel.send(crearPanel());
         await message.delete().catch(() => {});
     }
-    // Comando !verlogs (te envía el registro por mensaje privado)
     if (message.content === '!verlogs') {
         try {
             const logs = fs.readFileSync('historial.txt', 'utf8');
-            await message.author.send("📜 **Historial de la banda:**\n```" + logs.slice(-1500) + "```");
+            await message.author.send("📜 **Historial:**\n```" + logs.slice(-1500) + "```");
             await message.delete();
-        } catch (err) {
-            await message.reply("Aún no hay registros.");
-        }
+        } catch (err) { await message.reply("Aún no hay registros."); }
     }
 });
 
 client.on('interactionCreate', async interaction => {
   if (!interaction.isButton()) return;
-
   const nombre = interaction.member.displayName;
-
   if (interaction.customId === "entrar") {
     jugadores.add(nombre);
     registrar(nombre, "ENTRÓ A CIUDAD");
@@ -79,13 +67,14 @@ client.on('interactionCreate', async interaction => {
     jugadores.delete(nombre);
     registrar(nombre, "SALIÓ DE CIUDAD");
   }
-
   await interaction.update(crearPanel());
 });
 
-// LOGIN (Usa variable de entorno TOKEN para Render)
-
-client.login(process.env.TOKEN || "PEGA_AQUÍ_TU_TOKEN_PARA_PRUEBAS");
-
-
-
+const TOKEN = process.env.TOKEN;
+if (!TOKEN) {
+    console.error("--- ❌ ERROR: NO SE ENCUENTRA EL TOKEN EN RENDER ---");
+} else {
+    client.login(TOKEN).catch(err => {
+        console.error("--- ❌ ERROR CRÍTICO AL CONECTAR: ---", err);
+    });
+}
