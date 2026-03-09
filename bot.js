@@ -45,7 +45,7 @@ const crearPanel = () => {
 };
 
 client.once('ready', () => {
-  console.log(`✅ ¡Bot encendido como: ${client.user.tag}!`);
+  console.log("¡HOLA! SOY EL BOT QUE ESTÁ FUNCIONANDO");
 });
 
 client.on('messageCreate', async message => {
@@ -85,4 +85,5 @@ client.on('interactionCreate', async interaction => {
 // LOGIN (Usa variable de entorno TOKEN para Render)
 
 client.login(process.env.TOKEN || "PEGA_AQUÍ_TU_TOKEN_PARA_PRUEBAS");
+
 
