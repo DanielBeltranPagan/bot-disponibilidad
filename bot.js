@@ -1,9 +1,24 @@
-const { Client, GatewayIntentBits, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
 const http = require('http');
 const fs = require('fs');
 
-console.log("--- 1. INICIANDO EL PROCESO ---");
+console.log("--- 1. INICIANDO PROCESO (DEBUG) ---");
 
+// 1. Verificación de carga de Discord.js
+let Client, GatewayIntentBits, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder;
+try {
+    const discord = require('discord.js');
+    Client = discord.Client;
+    GatewayIntentBits = discord.GatewayIntentBits;
+    ActionRowBuilder = discord.ActionRowBuilder;
+    ButtonBuilder = discord.ButtonBuilder;
+    ButtonStyle = discord.ButtonStyle;
+    EmbedBuilder = discord.EmbedBuilder;
+    console.log("--- 2. LIBRERÍA DISCORD.JS CARGADA CORRECTAMENTE ---");
+} catch (e) {
+    console.error("--- ❌ ERROR AL CARGAR DISCORD.JS (Verifica package.json): ---", e);
+}
+
+// Servidor para Render
 http.createServer((req, res) => { res.end('Bot activo'); }).listen(3000);
 
 const client = new Client({
@@ -39,21 +54,13 @@ const crearPanel = () => {
 };
 
 client.on('ready', () => {
-  console.log(`--- 2. CONECTADO COMO: ${client.user.tag} ---`);
+  console.log(`--- 3. CONECTADO COMO: ${client.user.tag} ---`);
 });
 
 client.on('messageCreate', async message => {
     if (message.content === '!panel') {
-        console.log("--- 3. PANEL SOLICITADO ---");
         await message.channel.send(crearPanel());
         await message.delete().catch(() => {});
-    }
-    if (message.content === '!verlogs') {
-        try {
-            const logs = fs.readFileSync('historial.txt', 'utf8');
-            await message.author.send("📜 **Historial:**\n```" + logs.slice(-1500) + "```");
-            await message.delete();
-        } catch (err) { await message.reply("Aún no hay registros."); }
     }
 });
 
@@ -70,11 +77,13 @@ client.on('interactionCreate', async interaction => {
   await interaction.update(crearPanel());
 });
 
+// Login final
 const TOKEN = process.env.TOKEN;
 if (!TOKEN) {
-    console.error("--- ❌ ERROR: NO SE ENCUENTRA EL TOKEN EN RENDER ---");
+    console.error("--- ❌ ERROR: NO SE ENCUENTRA LA VARIABLE 'TOKEN' EN RENDER ---");
 } else {
+    console.log("--- 4. INTENTANDO CONEXIÓN A DISCORD ---");
     client.login(TOKEN).catch(err => {
-        console.error("--- ❌ ERROR CRÍTICO AL CONECTAR: ---", err);
+        console.error("--- ❌ ERROR CRÍTICO AL CONECTAR CON TOKEN: ---", err);
     });
 }
