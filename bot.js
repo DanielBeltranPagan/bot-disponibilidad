@@ -30,7 +30,7 @@ const crearPanel = () => {
         : "❌ No hay nadie en la ciudad.";
     
     const embed = new EmbedBuilder()
-        .setTitle("🏢 PANEL DE CIUDAD - BANDA RP")
+        .setTitle("🏢 PANEL DE DISPONIBILIDAD")
         .setDescription(`### Miembros conectados (${jugadores.size})\n${lista}`)
         .setColor(0x2F3136)
         .setTimestamp();
@@ -83,4 +83,5 @@ client.on('interactionCreate', async interaction => {
 });
 
 // LOGIN (Usa variable de entorno TOKEN para Render)
+
 client.login(process.env.TOKEN || "PEGA_AQUÍ_TU_TOKEN_PARA_PRUEBAS");
