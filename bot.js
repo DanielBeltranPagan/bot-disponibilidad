@@ -50,7 +50,7 @@ client.once('ready', () => {
 
 client.on('messageCreate', async message => {
     // Comando !panel
-    if (message.content === '!panel') {
+    if (message.content === '!test') {
         await message.channel.send(crearPanel());
         await message.delete().catch(() => {});
     }
@@ -85,3 +85,4 @@ client.on('interactionCreate', async interaction => {
 // LOGIN (Usa variable de entorno TOKEN para Render)
 
 client.login(process.env.TOKEN || "PEGA_AQUÍ_TU_TOKEN_PARA_PRUEBAS");
+
